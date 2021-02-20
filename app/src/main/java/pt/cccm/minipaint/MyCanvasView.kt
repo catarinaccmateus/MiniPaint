@@ -1,10 +1,7 @@
 package pt.cccm.minipaint
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.*
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -15,8 +12,10 @@ private  const val STROKE_WIDTH = 12f //ha to be float
 class MyCanvasView (context: Context): View(context) {
     private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
+
     private val backgroundColor = ResourcesCompat.getColor(resources, R.color.colorBackground, null)
     private val drawColor = ResourcesCompat.getColor(resources, R.color.colorPaint, null)
+
     private  val paint = Paint().apply {
         color = drawColor
         isAntiAlias = true
@@ -34,6 +33,8 @@ class MyCanvasView (context: Context): View(context) {
 
     private var currentX = 0f
     private var currentY = 0f
+
+    private  lateinit var frame: Rect
 
     private  val touchTolerance = ViewConfiguration.get(context).scaledTouchSlop
 
@@ -79,10 +80,15 @@ path.reset()
         extraBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         extraCanvas = Canvas(extraBitmap)
         extraCanvas.drawColor(backgroundColor)
+
+        //Calculate frame
+        val inset = 40
+        frame = Rect(inset, inset, w -inset, h - inset)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.drawBitmap(extraBitmap, 0f, 0f, null)
+        canvas.drawRect(frame, paint)
     }
 }
